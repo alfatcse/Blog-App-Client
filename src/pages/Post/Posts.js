@@ -1,10 +1,12 @@
 import React from "react";
 import PostCard from "./PostCard";
-import { gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 const GET_POSTS = gql`
   query PostData {
     posts {
       title
+      createdAt
+      content
       author {
         name
         email
@@ -13,11 +15,19 @@ const GET_POSTS = gql`
   }
 `;
 const Posts = () => {
+  const { loading, error, data } = useQuery(GET_POSTS);
+  console.log(data);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error:{error.message}</p>;
   return (
     <div>
       <h1 className="text-center font-bold text-5xl my-4 pb-4">Posts</h1>
       <hr />
-      <PostCard></PostCard>
+      <div className="flex flex-wrap">
+        {data.posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
     </div>
   );
 };
